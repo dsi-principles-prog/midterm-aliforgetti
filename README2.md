@@ -58,5 +58,5 @@ Bracket 8: 45-49 - Late 40s
 
 Bracket 9: 50-60 - 50s 
 
-We want to *standardize the scores* relative to what age bracken an individual falls under. 
+We want to *standardize the scores* relative to what age bracket an individual falls under. 
 
