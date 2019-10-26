@@ -36,7 +36,13 @@ This calculation can be seen in the `30-feature-engineering` file in this reposi
 
 # Question of Interest
 
-We want to predict is the **neuroticism** of a person given their scores in the other dimensions relative to their particular age group or age bracket. 
+We want to predict is the **neuroticism** of a person.
+
+We can do this using their their scores in the other dimensions.
+
+But this is not enough to give a meaningful relationship. 
+
+We want to do this relative to their particular age group or age bracket. 
 
 I define these age brackets explicitly as:
 
