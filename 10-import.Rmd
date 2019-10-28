@@ -49,13 +49,13 @@ Columns in this dataset:
 
 - e1-E10 - Questions measuring extraversion
 
-- N1-N10 - Questions measuring neuroticism
+- n1-n10 - Questions measuring neuroticism
  
-- A1-A10 - Questions measuring agreeableness
+- a1-a10 - Questions measuring agreeableness
 
-- C1-C10 - Questions measuring conscientousness
+- c1-c10 - Questions measuring conscientousness
 
-- O1-O10 - Questions measuring oppenness to experience
+- o1-o10 - Questions measuring oppenness to experience
 
 ## Predictive Modeling Problem
 
