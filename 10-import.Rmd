@@ -1,0 +1,155 @@
+---
+title: "10-import"
+output: html_notebook
+---
+# This Notebook Is Going To Be For Importing and Cleaning
+
+## Import Libraries
+
+Importing libraries we are going to be using for this project.
+
+```{r importing libraries}
+library(readr)
+library(janitor)
+library(tidyverse)
+library(ggplot2)
+library(scales)
+library(assertr)
+```
+
+## Importing the Dataset
+
+```{r importing dataset}
+personas <- read_table2("data/data.csv")
+head(personas)
+dim(personas)
+```
+## Clean Names 
+Using clean names to generate usable name columns.
+```{r using clean names}
+personas <- personas %>% clean_names("lower_camel")
+```
+
+
+## About the dataset
+
+Columns in this dataset:
+
+- race - race of person
+
+- age - age of the person
+
+- engnat - whether english language is their native tongue or not
+
+- hand - right or left handed or both
+
+- source - how they came to the quiz (google, url, facebook, etc.) 
+
+- country - country they logged in from
+
+- e1-E10 - Questions measuring extraversion
+
+- N1-N10 - Questions measuring neuroticism
+ 
+- A1-A10 - Questions measuring agreeableness
+
+- C1-C10 - Questions measuring conscientousness
+
+- O1-O10 - Questions measuring oppenness to experience
+
+## Predictive Modeling Problem
+
+We want to predict if a person is going to score higher in **neuroticism** based on how they score in other dimensions with respect to their **age group** or **gender identity**. 
+
+
+## Columns of Interest
+For this analysis we will be interested in looking at:
+
+1. age,
+
+2. gender, and 
+
+3. all of the columns that represent the **quiz questions** (E1-E10, A1-A10, C1-C10, N1-N10, O1-O10) measuring the dimenional scores. 
+
+
+## Cleaning 
+
+## Explore the size, dimensionality and structure of the dataset
+
+**Exploring the dimensions of the dataset**
+
+```{r dimensions}
+dim(personas)
+```
+This shows that there are 57 variables and 19,719 observations. 19,719 people have filled out the test.  
+
+
+**Exploring what the dataset looks like.**
+```{r head of data}
+head(personas)
+```
+
+## Verifying that the ages have been entered correctly
+Age is an important variable as it will be used extensively in our feature engineering. 
+
+It is very likely that the ages that have been entered have been entered wrongly. We will check with the longest living human of age 122. 
+```{r age within bound check initial}
+personas %>% 
+  assert(within_bounds(9,122), age)
+```
+
+It is apparent from this that many people entered their birthyear as their age. We can fix this or we can remove it.
+
+There may be two types of mistyped ages:
+1. years
+2. not year or random numbers
+
+We are going to choose to remove all ages that are not years or random numbers. I don't think anybody younger than 11 should be taking the test.Therefore, I am going to remove all numbers greater than 2005
+```{r filtering age entered as years more than 2005}
+personas <-personas %>% 
+  filter(age<2005)
+
+dim(personas)
+```
+
+We are down by 2 values. These might have been mistyped numbers or not years. 
+
+Lets try and convert years to ages. It is **NOT** going to be an accurate representation as we will not know what year they took the test in so we will not know what age they were when they took the test, but we will guess year to be date to be November 6, 2016. This is based on the google search trend of the "big 5 personality test" phrase. We can see it that the most people searched for this phrase around that time and the second test in the search result is the test that generates our dataset.
+
+```{r changing ages entered as years to ages }
+
+personas <- personas %>% 
+  mutate(age = ifelse(age >999, 2016 - age, age))
+```
+
+```{r age within bound check # 2}
+personas %>% 
+  assert(within_bounds(9,122), age)
+```
+
+It seems there are still some (7) violations of our condition. Some people have entered three digit ages and might have entered a digit two times or entered an extra digit. Since these are only 7 data point we can remove these and they might not be very accurate anyway
+
+```{r removing ages more than 100}
+
+personas <- personas %>% 
+  filter(age < 101) 
+
+```
+
+Let's finally check again if our bounds are being met:
+```{r age within bound check # 3 (final)}
+personas %>% 
+  assert(within_bounds(9,122), age)
+```
+
+And yes. Our data now has all the "correct" ages.
+
+## Verify that gender does not have any NA's
+We want to make sure that the gender column does not have any NA's and does not have any entries which are not 0,1,2, or 3
+
+```{r checking for NAs and bounds in gender}
+personas %>% 
+  verify(not_na(gender)) %>% 
+  assert(within_bounds(0,3),gender)
+```
+We are now ready for some feature engineering

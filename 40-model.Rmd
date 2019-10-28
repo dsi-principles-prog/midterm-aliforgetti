@@ -1,0 +1,28 @@
+---
+title: "40-model"
+output: html_notebook
+---
+
+#Creating the Augmented Dataframe
+**Pulled predictor column to the front of the dataframe**
+
+```{r}
+
+personas_aug_df <- personas%>% 
+  get_scores() %>% 
+  norm_by_var(c("extraversion","neuroticism", "agreeableness","conscientiousness", "openness")) %>% 
+  add_age_bracks() %>% 
+  mean_by_bracket(c("extraversion_norm",
+                    "neuroticism_norm", 
+                    "agreeableness_norm",
+                    "conscientiousness_norm", 
+                    "openness_norm")) %>% 
+  simple_neuro() %>% 
+  select(neuroticism_bracks_simple, age, brackets, everything())
+
+head(personas_aug_df)
+  
+```
+
+
+We might remove the columns with the questions. 
