@@ -58,12 +58,23 @@ personas %>%
 We will need to normalize these as all of them have different ranges. 
 
 ```{r Normalization By Variable Function}
-
-#norm_by_var <- 
+normalization <- function(x, na.rm = T) (x - min(x, na.rm = T))/(max(x, na.rm = T)-min(x, na.rm = T))
 #[Code here for normalized function]
+norm_by_var <- function(df, vars)
+{
+  df %>% 
+    mutate_at(vars, list(norm = normalization)) %>% 
+    select(contains('_norm'), vars, everything())
+}
 
 #[Code here that verifies normalized values created are within the bounds of 0 and 1]
-
+get_scores(personas) %>%
+  norm_by_var(dimensions) %>%
+  assert(within_bounds(0,1), extraversion_norm) %>%
+  assert(within_bounds(0,1), neuroticism_norm) %>%
+  assert(within_bounds(0,1), agreeableness_norm) %>%
+  assert(within_bounds(0,1), conscientiousness_norm) %>%
+  assert(within_bounds(0,1), openness_norm)
 ```
 
 #Creating age brackets
